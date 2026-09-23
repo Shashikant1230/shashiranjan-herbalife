@@ -1443,7 +1443,7 @@ footer { background: #082608; color: white; padding: 70px 40px 30px; }
             <li onclick="showSection('addConsumer', this)"><i class="fas fa-users"></i> Add Consumer</li>
             <li onclick="showSection('changePassword', this)"><i class="fas fa-key"></i> Change Password</li>
             <li onclick="showSection('viewAll', this)"><i class="fas fa-list"></i> View All Data</li>
-            <li onclick="showSection('leadRecord', this)"><i class="fas fa-list"></i> Lead Record</li>
+            <li onclick="openLeadRecord()"><i class="fas fa-clipboard-list"></i> Lead Record</li>
             <li class="logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</li>
         </ul>
     </aside>
@@ -1776,6 +1776,17 @@ function getData(key) {
 }
 function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
 
+/* ============================================================
+   LEAD RECORD - Open separate page
+   ============================================================ */
+function openLeadRecord() {
+    if (sessionStorage.getItem('loggedIn') !== 'true') {
+        showToast('⚠️ Please login first!', true);
+        return;
+    }
+    window.open('leadrecord.html', '_blank');
+}
+    
 /* ============================================================
    TOAST
    ============================================================ */
