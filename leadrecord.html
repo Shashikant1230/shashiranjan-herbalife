@@ -2977,6 +2977,7 @@
 
         // ===== EDIT LEAD =====
         function editLead(id) {
+            console.log("called");
             const l = leads.find(x => x.id === id);
             if (!l) return;
             openModal(renderAddForm(l));
