@@ -1581,6 +1581,18 @@
             const todayFollowups = leads.filter(l => l.nextFollowup === today);
             const overdue = leads.filter(l => l.nextFollowup && l.nextFollowup < today && l.status !== 'Customer' && l.status !== 'Not Interested');
 
+            // Source-wise counts
+const facebookCount  = leads.filter(l => l.source === 'Facebook').length;
+const instaCount     = leads.filter(l => l.source === 'Instagram').length;
+const whatsappCount  = leads.filter(l => l.source === 'WhatsApp').length;
+const callCount      = leads.filter(l => l.source === 'Call').length;
+const googleCount    = leads.filter(l => l.source === 'Google').length;
+const websiteCount   = leads.filter(l => l.source === 'Website').length;
+const walkinCount    = leads.filter(l => l.source === 'Walk-in').length;
+const otherCount     = leads.filter(l => 
+  !['Facebook','Instagram','WhatsApp','Call','Google','Website','Walk-in'].includes(l.source)
+).length;
+            
             document.getElementById('statsGrid').innerHTML = `
                 <div class="stat-card"><div class="number">${total}</div><div class="label">Total Leads</div></div>
                 <div class="stat-card"><div class="number">${newLeads}</div><div class="label">New</div></div>
@@ -1590,7 +1602,77 @@
                 <div class="stat-card"><div class="number">${customers}</div><div class="label">Customers</div></div>
                 <div class="stat-card" style="border-left:5px solid #f6d365;"><div class="number">${pcCount}</div><div class="label">⭐ Preferred (PC)</div></div>
                 <div class="stat-card" style="border-left:5px solid #0b6e5c;"><div class="number">${coachCount}</div><div class="label">👨‍🏫 Coaches</div></div>
+
+                <div class="stat-card"><div class="number">${total}</div><div class="label">Total Leads</div></div>
+<div class="stat-card"><div class="number">${newLeads}</div><div class="label">New</div></div>
+<div class="stat-card today"><div class="number">${todayFollowups.length}</div><div class="label">Follow-ups Today</div></div>
+<div class="stat-card"><div class="number">${interested}</div><div class="label">Interested</div></div>
+<div class="stat-card"><div class="number">${demo}</div><div class="label">Demo</div></div>
+<div class="stat-card"><div class="number">${customers}</div><div class="label">Customers</div></div>
+<div class="stat-card" style="border-left:5px solid #f6d365;"><div class="number">${pcCount}</div><div class="label">⭐ Preferred (PC)</div></div>
+<div class="stat-card" style="border-left:5px solid #0b6e5c;"><div class="number">${coachCount}</div><div class="label">👨‍🏫 Coaches</div></div>
+
+<!-- 🔽 SOURCE-WISE CARDS 🔽 -->
+<div class="stat-card" style="border-left:5px solid #1877f2;">
+  <div class="number">${facebookCount}</div>
+  <div class="label">📘 Facebook</div>
+</div>
+<div class="stat-card" style="border-left:5px solid #e1306c;">
+  <div class="number">${instaCount}</div>
+  <div class="label">📸 Instagram</div>
+</div>
+<div class="stat-card" style="border-left:5px solid #25d366;">
+  <div class="number">${whatsappCount}</div>
+  <div class="label">💬 WhatsApp</div>
+</div>
+<div class="stat-card" style="border-left:5px solid #ff6b6b;">
+  <div class="number">${callCount}</div>
+  <div class="label">📞 Call</div>
+</div>
+<div class="stat-card" style="border-left:5px solid #4285f4;">
+  <div class="number">${googleCount}</div>
+  <div class="label">🔍 Google</div>
+</div>
+<div class="stat-card" style="border-left:5px solid #9b59b6;">
+  <div class="number">${websiteCount}</div>
+  <div class="label">🌐 Website</div>
+</div>
+<div class="stat-card" style="border-left:5px solid #f39c12;">
+  <div class="number">${walkinCount}</div>
+  <div class="label">🚶 Walk-in</div>
+</div>
+<div class="stat-card" style="border-left:5px solid #7f8c8d;">
+  <div class="number">${otherCount}</div>
+  <div class="label">📌 Other</div>
+</div>
+
             `;
+
+            // Saare sources ka count ek object me
+const sourceCounts = leads.reduce((acc, l) => {
+  const src = l.source || 'Other';
+  acc[src] = (acc[src] || 0) + 1;
+  return acc;
+}, {});
+
+const sourceIcons = {
+  'Facebook':  { icon: '📘', color: '#1877f2' },
+  'Instagram': { icon: '📸', color: '#e1306c' },
+  'WhatsApp':  { icon: '💬', color: '#25d366' },
+  'Call':      { icon: '📞', color: '#ff6b6b' },
+  'Google':    { icon: '🔍', color: '#4285f4' },
+  'Website':   { icon: '🌐', color: '#9b59b6' },
+  'Walk-in':   { icon: '🚶', color: '#f39c12' },
+  'Other':     { icon: '📌', color: '#7f8c8d' }
+};
+
+const sourceCards = Object.entries(sourceCounts).map(([src, count]) => {
+  const meta = sourceIcons[src] || { icon: '📌', color: '#7f8c8d' };
+  return `<div class="stat-card" style="border-left:5px solid ${meta.color};">
+            <div class="number">${count}</div>
+            <div class="label">${meta.icon} ${src}</div>
+          </div>`;
+}).join('');
 
             let html = todayFollowups.length ? todayFollowups.map(l =>
                 `<div class="lead-row"><span class="id-badge">${l.id}</span><span>${l.name}</span><span>${l.mobile}</span><span class="badge badge-${l.status.toLowerCase()}">${l.status}</span><span>${formatDate(l.nextFollowup)}</span><button class="btn btn-sm btn-primary" onclick="viewLead('${l.id}')">📋 Details</button></div>`
